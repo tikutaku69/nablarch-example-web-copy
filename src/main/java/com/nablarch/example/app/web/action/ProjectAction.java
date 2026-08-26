@@ -11,7 +11,6 @@ import com.nablarch.example.app.web.dto.ProjectSearchDto;
 import com.nablarch.example.app.web.form.ProjectForm;
 import com.nablarch.example.app.web.form.ProjectSearchForm;
 import com.nablarch.example.app.web.form.ProjectTargetForm;
-import com.nablarch.example.app.web.form.ProjectUpdateForm;
 
 import nablarch.common.dao.DeferredEntityList;
 import nablarch.common.dao.UniversalDao;
@@ -268,122 +267,6 @@ public class ProjectAction {
         ));
 
         return new HttpResponse("/WEB-INF/view/project/detail.jsp");
-    }
-
-    /**
-     * 更新初期画面を表示。
-     *
-     * @param request HTTPリクエスト
-     * @param context 実行コンテキスト
-     * @return HTTPレスポンス
-     */
-    @InjectForm(form = ProjectTargetForm.class)
-    public HttpResponse edit(HttpRequest request, ExecutionContext context) {
-
-        // 更新処理で使用するセッション情報を削除しておく。
-        SessionUtil.delete(context, "project");
-
-        ProjectTargetForm targetForm = context.getRequestScopedVar("form");
-        LoginUserPrincipal userContext = SessionUtil.get(context, "userContext");
-
-        ProjectDto dto = UniversalDao.findBySqlFile(ProjectDto.class, "FIND_BY_PROJECT",
-                new Object[] {Integer.parseInt(targetForm.getProjectId()), userContext.getUserId()});
-
-        // 出力情報をリクエストスコープにセット
-        context.setRequestScopedVar("form", dto);
-
-        SessionUtil.put(context, "project", BeanUtil.createAndCopy(Project.class, dto));
-
-        return new HttpResponse("/WEB-INF/view/project/update.jsp");
-    }
-
-    /**
-     * 更新確認画面を表示。
-     *
-     * @param request HTTPリクエスト
-     * @param context 実行コンテキスト
-     * @return HTTPレスポンス
-     */
-    @InjectForm(form = ProjectUpdateForm.class, prefix = "form")
-    @OnError(type = ApplicationException.class, path = "/WEB-INF/view/project/update.jsp")
-    public HttpResponse confirmOfUpdate(HttpRequest request, ExecutionContext context) {
-        ProjectUpdateForm form = context.getRequestScopedVar("form");
-
-        if (form.hasClientId()) {
-            if (!UniversalDao.exists(Client.class, "FIND_BY_CLIENT_ID",
-                    new Object[] {Integer.parseInt(form.getClientId())})) {
-                //補足：数値に対する自動フォーマット(自動的にカンマ編集される)を避けるため、Integerを明示的に文字列に変換している。
-                throw new ApplicationException(
-                        MessageUtil.createMessage(MessageLevel.ERROR,
-                                "errors.nothing.client", form.getClientId()));
-            }
-        }
-
-        Project project = SessionUtil.get(context, "project");
-        BeanUtil.copy(form, project);
-
-        // 出力情報をリクエストスコープにセット
-        context.setRequestScopedVar("form", BeanUtil.createAndCopy(ProjectDto.class, form));
-        context.setRequestScopedVar("profit", new ProjectProfit(
-                project.getSales(),
-                project.getCostOfGoodsSold(),
-                project.getSga(),
-                project.getAllocationOfCorpExpenses()
-        ));
-
-        return new HttpResponse("/WEB-INF/view/project/confirmOfUpdate.jsp");
-    }
-
-    /**
-     * 更新画面へ戻る。
-     *
-     * @param request HTTPリクエスト
-     * @param context 実行コンテキスト
-     * @return HTTPレスポンス
-     */
-    public HttpResponse backToEdit(HttpRequest request, ExecutionContext context) {
-
-        Project project = SessionUtil.get(context, "project");
-
-        ProjectDto dto = BeanUtil.createAndCopy(ProjectDto.class, project);
-
-        if (dto.hasClientId()) {
-            // 入力画面に戻る際に顧客データが見つからない場合はデータ不整合なので、
-            // NoDataException を発生させてシステムエラーとする。
-            // ※ example アプリは顧客データのメンテナンス機能がないのでこの対応とするが、
-            //   通常業務で削除されることが想定される場合はシステムエラーとはせずにユーザーへの通知が必要。
-            Client client = UniversalDao.findById(Client.class, dto.getClientId());
-            dto.setClientName(client.getClientName());
-        }
-        context.setRequestScopedVar("form", dto);
-
-        return new HttpResponse("/WEB-INF/view/project/update.jsp");
-    }
-
-    /**
-     * 更新処理。
-     *
-     * @param request HTTPリクエスト
-     * @param context 実行コンテキスト
-     * @return HTTPレスポンス
-     */
-    @OnDoubleSubmission
-    public HttpResponse update(HttpRequest request, ExecutionContext context) {
-        final Project targetProject = SessionUtil.delete(context, "project");
-        UniversalDao.update(targetProject);
-
-        return new HttpResponse(303, "redirect://completeOfUpdate");
-    }
-
-    /**
-     * 更新完了画面を表示。
-     *
-     * @param request HTTPリクエスト
-     * @param context 実行コンテキスト
-     * @return HTTPレスポンス
-     */
-    public HttpResponse completeOfUpdate(HttpRequest request, ExecutionContext context) {
-        return new HttpResponse("/WEB-INF/view/project/completeOfUpdate.jsp");
     }
 
     /**

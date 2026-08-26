@@ -193,142 +193,142 @@ class ProjectActionRequestTest {
         support.execute("showAbNormal", new SignedInAdvice());
     }
 
-    /**
-     * 更新画面表示正常系ケース。
-     */
-    @Test
-    void editNormal() {
-        support.execute("editNormal", new SignedInAdvice() {
-
-            @Override
-            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
-                                              ExecutionContext context) {
-                SessionUtil.delete(context, "project");
-                SessionUtil.put(context, "project", createMinimalProject());
-            }
-
-            @Override
-            public void afterExecute(TestCaseInfo testCaseInfo,
-                                     ExecutionContext context) {
-                support.assertEntity(testCaseInfo.getSheetName(),
-                        "form" + testCaseInfo.getTestCaseNo(),
-                        context.getRequestScopedVar("form"));
-
-                if (SessionUtil.get(context, "project") == null) {
-                    Assertion.fail("No Project in session.");
-                }
-            }
-        });
-    }
-
-    /**
-     * 更新画面表示異常系ケース。
-     */
-    @Test
-    void editAbNormal() {
-        support.execute("editAbNormal", new SignedInAdvice());
-    }
-
-    /**
-     * プロジェクト更新確認画面表示正常系ケース。
-     */
-    @Test
-    void confirmOfUpdateNormal() {
-        support.execute("confirmOfUpdateNormal", new SignedInAdvice() {
-
-            @Override
-            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
-                                              ExecutionContext context) {
-                SessionUtil.delete(context, "project");
-                SessionUtil.put(context, "project", createMinimalProject());
-            }
-
-            @Override
-            public void afterExecute(TestCaseInfo testCaseInfo,
-                                     ExecutionContext context) {
-                support.assertEntity(testCaseInfo.getSheetName(),
-                        "project" + testCaseInfo.getTestCaseNo(),
-                        context.getRequestScopedVar("project"));
-            }
-        });
-    }
-
-    /**
-     * プロジェクト更新確認画面表示異常系ケース。
-     */
-    @Test
-    void confirmOfUpdateAbNormal() {
-        support.execute("confirmOfUpdateAbNormal", new SignedInAdvice());
-    }
-
-    /**
-     * プロジェクト更新画面へ戻る正常系ケース。
-     */
-    @Test
-    void backToEditNormal() {
-        support.execute("backToEditNormal", new SignedInAdvice() {
-            @Override
-            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
-                                              ExecutionContext context) {
-                SessionUtil.delete(context, "project");
-                Project project = createMinimalProject();
-                project.setProjectStartDate(DateUtil.getDate("20180101"));
-                SessionUtil.put(context, "project", project);
-            }
-
-            @Override
-            public void afterExecute(TestCaseInfo testCaseInfo,
-                                     ExecutionContext context) {
-                support.assertEntity(testCaseInfo.getSheetName(),
-                        "project" + testCaseInfo.getTestCaseNo(),
-                        context.getRequestScopedVar("project"));
-            }
-        });
-    }
-
-    /**
-     * プロジェクト更新正常系ケース。
-     */
-    @Test
-    void updateNormal() {
-        support.execute("updateNormal", new SignedInAdvice() {
-            @Override
-            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
-                                              ExecutionContext context) {
-                SessionUtil.delete(context, "project");
-                Project project = createMinimalProject();
-                project.setProjectId(99998);
-                project.setVersion(0L);
-                SessionUtil.put(context, "project", project);
-            }
-        });
-    }
-
-    /**
-     * プロジェクト更新異常系ケース。
-     */
-    @Test
-    void updateAbNormal() {
-        support.execute("updateAbNormal", new SignedInAdvice() {
-            @Override
-            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
-                                              ExecutionContext context) {
-                SessionUtil.delete(context, "project");
-                Project project = createMinimalProject();
-                project.setProjectId(99998);
-                project.setVersion(0L);
-                SessionUtil.put(context, "project", project);
-            }
-        });
-    }
-
-    /**
-     * プロジェクト更新完了画面表示正常系ケース。
-     */
-    @Test
-    void completeOfUpdateNormal() {
-        support.execute("completeOfUpdateNormal", new SignedInAdvice());
-    }
+//    /**
+//     * 更新画面表示正常系ケース。
+//     */
+//    @Test
+//    void editNormal() {
+//        support.execute("editNormal", new SignedInAdvice() {
+//
+//            @Override
+//            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
+//                                              ExecutionContext context) {
+//                SessionUtil.delete(context, "project");
+//                SessionUtil.put(context, "project", createMinimalProject());
+//            }
+//
+//            @Override
+//            public void afterExecute(TestCaseInfo testCaseInfo,
+//                                     ExecutionContext context) {
+//                support.assertEntity(testCaseInfo.getSheetName(),
+//                        "form" + testCaseInfo.getTestCaseNo(),
+//                        context.getRequestScopedVar("form"));
+//
+//                if (SessionUtil.get(context, "project") == null) {
+//                    Assertion.fail("No Project in session.");
+//                }
+//            }
+//        });
+//    }
+//
+//    /**
+//     * 更新画面表示異常系ケース。
+//     */
+//    @Test
+//    void editAbNormal() {
+//        support.execute("editAbNormal", new SignedInAdvice());
+//    }
+//
+//    /**
+//     * プロジェクト更新確認画面表示正常系ケース。
+//     */
+//    @Test
+//    void confirmOfUpdateNormal() {
+//        support.execute("confirmOfUpdateNormal", new SignedInAdvice() {
+//
+//            @Override
+//            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
+//                                              ExecutionContext context) {
+//                SessionUtil.delete(context, "project");
+//                SessionUtil.put(context, "project", createMinimalProject());
+//            }
+//
+//            @Override
+//            public void afterExecute(TestCaseInfo testCaseInfo,
+//                                     ExecutionContext context) {
+//                support.assertEntity(testCaseInfo.getSheetName(),
+//                        "project" + testCaseInfo.getTestCaseNo(),
+//                        context.getRequestScopedVar("project"));
+//            }
+//        });
+//    }
+//
+//    /**
+//     * プロジェクト更新確認画面表示異常系ケース。
+//     */
+//    @Test
+//    void confirmOfUpdateAbNormal() {
+//        support.execute("confirmOfUpdateAbNormal", new SignedInAdvice());
+//    }
+//
+//    /**
+//     * プロジェクト更新画面へ戻る正常系ケース。
+//     */
+//    @Test
+//    void backToEditNormal() {
+//        support.execute("backToEditNormal", new SignedInAdvice() {
+//            @Override
+//            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
+//                                              ExecutionContext context) {
+//                SessionUtil.delete(context, "project");
+//                Project project = createMinimalProject();
+//                project.setProjectStartDate(DateUtil.getDate("20180101"));
+//                SessionUtil.put(context, "project", project);
+//            }
+//
+//            @Override
+//            public void afterExecute(TestCaseInfo testCaseInfo,
+//                                     ExecutionContext context) {
+//                support.assertEntity(testCaseInfo.getSheetName(),
+//                        "project" + testCaseInfo.getTestCaseNo(),
+//                        context.getRequestScopedVar("project"));
+//            }
+//        });
+//    }
+//
+//    /**
+//     * プロジェクト更新正常系ケース。
+//     */
+//    @Test
+//    void updateNormal() {
+//        support.execute("updateNormal", new SignedInAdvice() {
+//            @Override
+//            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
+//                                              ExecutionContext context) {
+//                SessionUtil.delete(context, "project");
+//                Project project = createMinimalProject();
+//                project.setProjectId(99998);
+//                project.setVersion(0L);
+//                SessionUtil.put(context, "project", project);
+//            }
+//        });
+//    }
+//
+//    /**
+//     * プロジェクト更新異常系ケース。
+//     */
+//    @Test
+//    void updateAbNormal() {
+//        support.execute("updateAbNormal", new SignedInAdvice() {
+//            @Override
+//            public void signedInBeforeExecute(TestCaseInfo testCaseInfo,
+//                                              ExecutionContext context) {
+//                SessionUtil.delete(context, "project");
+//                Project project = createMinimalProject();
+//                project.setProjectId(99998);
+//                project.setVersion(0L);
+//                SessionUtil.put(context, "project", project);
+//            }
+//        });
+//    }
+//
+//    /**
+//     * プロジェクト更新完了画面表示正常系ケース。
+//     */
+//    @Test
+//    void completeOfUpdateNormal() {
+//        support.execute("completeOfUpdateNormal", new SignedInAdvice());
+//    }
 
     /**
      * プロジェクト削除正常系ケース。
