@@ -270,6 +270,33 @@ public class ProjectAction {
     }
 
     /**
+     * 更新初期画面を表示。
+     *
+     * @param request HTTPリクエスト
+     * @param context 実行コンテキスト
+     * @return HTTPレスポンス
+     */
+    @InjectForm(form = ProjectTargetForm.class)
+    public HttpResponse edit(HttpRequest request, ExecutionContext context) {
+
+        // 更新処理で使用するセッション情報を削除しておく。
+        SessionUtil.delete(context, "project");
+
+        ProjectTargetForm targetForm = context.getRequestScopedVar("form");
+        LoginUserPrincipal userContext = SessionUtil.get(context, "userContext");
+
+        ProjectDto dto = UniversalDao.findBySqlFile(ProjectDto.class, "FIND_BY_PROJECT",
+                new Object[] {Integer.parseInt(targetForm.getProjectId()), userContext.getUserId()});
+
+        // 出力情報をリクエストスコープにセット
+        context.setRequestScopedVar("form", dto);
+
+        SessionUtil.put(context, "project", BeanUtil.createAndCopy(Project.class, dto));
+
+        return new HttpResponse("/WEB-INF/view/project/update.jsp");
+    }
+
+    /**
      * 削除処理。
      *
      * @param request HTTPリクエスト
