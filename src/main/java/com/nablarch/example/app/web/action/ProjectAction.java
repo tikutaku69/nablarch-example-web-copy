@@ -12,6 +12,7 @@ import com.nablarch.example.app.web.form.ProjectForm;
 import com.nablarch.example.app.web.form.ProjectSearchForm;
 import com.nablarch.example.app.web.form.ProjectTargetForm;
 
+import com.nablarch.example.app.web.form.ProjectUpdateForm;
 import nablarch.common.dao.DeferredEntityList;
 import nablarch.common.dao.UniversalDao;
 import nablarch.common.databind.ObjectMapper;
@@ -294,6 +295,47 @@ public class ProjectAction {
         SessionUtil.put(context, "project", BeanUtil.createAndCopy(Project.class, dto));
 
         return new HttpResponse("/WEB-INF/view/project/update.jsp");
+    }
+
+    /**
+     * 更新確認画面を表示。
+     *
+     * @param request HTTPリクエスト
+     * @param context 実行コンテキスト
+     * @return HTTPレスポンス
+     */
+    @InjectForm(form = ProjectUpdateForm.class, prefix = "form")
+    @OnError(type = ApplicationException.class,
+            path = "/WEB-INF/view/project/update.jsp")
+    public HttpResponse confirmOfUpdate(HttpRequest request, ExecutionContext context) {
+        ProjectUpdateForm form = context.getRequestScopedVar("form");
+
+        // データベースを検索して入力されたIDを持つ顧客が存在するか確認する
+        if (form.hasClientId()) {
+            if (!UniversalDao.exists(Client.class, "FIND_BY_CLIENT_ID",
+                    new Object[] {Integer.parseInt(form.getClientId()) })) {
+                throw new ApplicationException(
+                        MessageUtil.createMessage(MessageLevel.ERROR,
+                                "errors.nothing.client", form.getClientId()));
+
+            }
+        }
+
+        Project project = SessionUtil.get(context, "project");
+
+        // フォームの値をセッションへ上書きする
+        BeanUtil.copy(form, project);
+
+        // 出力情報をリクエストスコープにセット
+        context.setRequestScopedVar("form", BeanUtil.createAndCopy(ProjectDto.class, form));
+        context.setRequestScopedVar("profit", new ProjectProfit(
+                project.getSales(),
+                project.getCostOfGoodsSold(),
+                project.getSga(),
+                project.getAllocationOfCorpExpenses()
+        ));
+
+        return new HttpResponse("/WEB-INF/view/project/confirmOfUpdate.jsp");
     }
 
     /**
