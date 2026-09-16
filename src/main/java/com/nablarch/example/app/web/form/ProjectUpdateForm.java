@@ -127,15 +127,6 @@ public class ProjectUpdateForm implements Serializable {
     }
 
     /**
-     * 顧客IDを保持しているか否かを返す。
-     *
-     * @return trueの場合は、顧客IDを保持している。
-     */
-    public boolean hasClientId() {
-        return clientId != null;
-    }
-
-    /**
      * 顧客名を取得する。
      *
      * @return 顧客名
@@ -333,6 +324,15 @@ public class ProjectUpdateForm implements Serializable {
      */
     public void setAllocationOfCorpExpenses(String allocationOfCorpExpenses) {
         this.allocationOfCorpExpenses = allocationOfCorpExpenses;
+    }
+
+    /**
+     * 顧客IDを保持しているか否かを返す。
+     *
+     * @return trueの場合は、顧客IDを保持している。
+     */
+    public boolean hasClientId() {
+        return clientId != null;
     }
 
     /**
