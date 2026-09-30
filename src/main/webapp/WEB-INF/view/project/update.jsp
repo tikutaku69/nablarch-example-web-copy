@@ -291,6 +291,7 @@
                         <n:forInputPage>
                             <n:a href="/action/project/show/${project.projectId}" cssClass="btn btn-lg btn-light">戻る</n:a>
                             <n:submit value="削除" uri="/action/project/delete" id="bottomDeleteButton" cssClass="btn btn-lg btn-danger" allowDoubleSubmission="false" type="button" />
+                            <n:submit type="submit" uri="/action/project/confirmOfUpdate" value="更新" />
                         </n:forInputPage>
                         <n:forConfirmationPage>
                             <n:submit value="入力へ戻る" uri="/action/project/backToEdit" id="bottomBackButton" cssClass="btn btn-lg btn-light" type="button" />
