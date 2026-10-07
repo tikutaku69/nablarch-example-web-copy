@@ -339,6 +339,21 @@ public class ProjectAction {
     }
 
     /**
+     * 更新処理。
+     *
+     * @param request HTTPリクエスト
+     * @param context 実行コンテキスト
+     * @return HTTPレスポンス
+     */
+    @OnDoubleSubmission
+    public HttpResponse update(HttpRequest request, ExecutionContext context) {
+        Project targetProject = SessionUtil.delete(context, "project");
+        UniversalDao.update(targetProject);
+
+        return new HttpResponse(303, "redirect://completeOfUpdate");
+    }
+
+    /**
      * 削除処理。
      *
      * @param request HTTPリクエスト
