@@ -354,6 +354,17 @@ public class ProjectAction {
     }
 
     /**
+     * 更新完了画面を表示。
+     *
+     * @param request HTTPリクエスト
+     * @param context 実行コンテキスト
+     * @return HTTPレスポンス
+     */
+    public HttpResponse completeOfUpdate(HttpRequest request, ExecutionContext context) {
+        return new HttpResponse("/WEB-INF/view/project/completeOfUpdate.jsp");
+    }
+
+    /**
      * 削除処理。
      *
      * @param request HTTPリクエスト
