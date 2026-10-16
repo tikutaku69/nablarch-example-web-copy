@@ -1,19 +1,12 @@
 package com.nablarch.example.app.web.form;
 
-import java.io.Serializable;
-
+import com.nablarch.example.app.entity.core.validation.validator.DateRangeValidator;
 import jakarta.validation.constraints.AssertTrue;
-
 import nablarch.core.validation.ee.Domain;
 import nablarch.core.validation.ee.Required;
 
-import com.nablarch.example.app.entity.core.validation.validator.DateRangeValidator;
+import java.io.Serializable;
 
-/**
- * プロジェクト更新フォーム。
- *
- * @author Nabu Rakutaro
- */
 public class ProjectUpdateForm implements Serializable {
 
     /** シリアルバージョンUID */
@@ -85,7 +78,7 @@ public class ProjectUpdateForm implements Serializable {
      * @return プロジェクト名
      */
     public String getProjectName() {
-        return projectName;
+        return this.projectName;
     }
 
     /**
@@ -131,15 +124,6 @@ public class ProjectUpdateForm implements Serializable {
      */
     public String getClientId() {
         return clientId;
-    }
-
-    /**
-     * 顧客IDを保持しているか否かを返す。
-     *
-     * @return trueの場合は、顧客IDを保持している。
-     */
-    public boolean hasClientId() {
-        return clientId != null;
     }
 
     /**
@@ -220,7 +204,6 @@ public class ProjectUpdateForm implements Serializable {
      *
      * @param projectName 設定するプロジェクト名
      */
-
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -297,6 +280,7 @@ public class ProjectUpdateForm implements Serializable {
         this.projectEndDate = projectEndDate;
     }
 
+
     /**
      * 備考を設定する。
      *
@@ -342,6 +326,14 @@ public class ProjectUpdateForm implements Serializable {
         this.allocationOfCorpExpenses = allocationOfCorpExpenses;
     }
 
+    /**
+     * 顧客IDを保持しているか否かを返す。
+     *
+     * @return trueの場合は、顧客IDを保持している。
+     */
+    public boolean hasClientId() {
+        return clientId != null;
+    }
 
     /**
      * プロジェクト期間（プロジェクト開始日～プロジェクト終了日）正しく設定されているかを判定します。
@@ -354,4 +346,6 @@ public class ProjectUpdateForm implements Serializable {
     private boolean isValidProjectPeriod() {
         return new DateRangeValidator(projectStartDate, projectEndDate).isValid();
     }
+
+
 }

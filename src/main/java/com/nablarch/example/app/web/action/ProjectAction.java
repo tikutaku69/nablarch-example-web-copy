@@ -11,8 +11,8 @@ import com.nablarch.example.app.web.dto.ProjectSearchDto;
 import com.nablarch.example.app.web.form.ProjectForm;
 import com.nablarch.example.app.web.form.ProjectSearchForm;
 import com.nablarch.example.app.web.form.ProjectTargetForm;
-import com.nablarch.example.app.web.form.ProjectUpdateForm;
 
+import com.nablarch.example.app.web.form.ProjectUpdateForm;
 import nablarch.common.dao.DeferredEntityList;
 import nablarch.common.dao.UniversalDao;
 import nablarch.common.databind.ObjectMapper;
@@ -305,21 +305,25 @@ public class ProjectAction {
      * @return HTTPレスポンス
      */
     @InjectForm(form = ProjectUpdateForm.class, prefix = "form")
-    @OnError(type = ApplicationException.class, path = "/WEB-INF/view/project/update.jsp")
+    @OnError(type = ApplicationException.class,
+            path = "/WEB-INF/view/project/update.jsp")
     public HttpResponse confirmOfUpdate(HttpRequest request, ExecutionContext context) {
         ProjectUpdateForm form = context.getRequestScopedVar("form");
 
+        // データベースを検索して入力されたIDを持つ顧客が存在するか確認する
         if (form.hasClientId()) {
             if (!UniversalDao.exists(Client.class, "FIND_BY_CLIENT_ID",
-                    new Object[] {Integer.parseInt(form.getClientId())})) {
-                //補足：数値に対する自動フォーマット(自動的にカンマ編集される)を避けるため、Integerを明示的に文字列に変換している。
+                    new Object[] {Integer.parseInt(form.getClientId()) })) {
                 throw new ApplicationException(
                         MessageUtil.createMessage(MessageLevel.ERROR,
                                 "errors.nothing.client", form.getClientId()));
+
             }
         }
 
         Project project = SessionUtil.get(context, "project");
+
+        // フォームの値をセッションへ上書きする
         BeanUtil.copy(form, project);
 
         // 出力情報をリクエストスコープにセット
@@ -335,32 +339,6 @@ public class ProjectAction {
     }
 
     /**
-     * 更新画面へ戻る。
-     *
-     * @param request HTTPリクエスト
-     * @param context 実行コンテキスト
-     * @return HTTPレスポンス
-     */
-    public HttpResponse backToEdit(HttpRequest request, ExecutionContext context) {
-
-        Project project = SessionUtil.get(context, "project");
-
-        ProjectDto dto = BeanUtil.createAndCopy(ProjectDto.class, project);
-
-        if (dto.hasClientId()) {
-            // 入力画面に戻る際に顧客データが見つからない場合はデータ不整合なので、
-            // NoDataException を発生させてシステムエラーとする。
-            // ※ example アプリは顧客データのメンテナンス機能がないのでこの対応とするが、
-            //   通常業務で削除されることが想定される場合はシステムエラーとはせずにユーザーへの通知が必要。
-            Client client = UniversalDao.findById(Client.class, dto.getClientId());
-            dto.setClientName(client.getClientName());
-        }
-        context.setRequestScopedVar("form", dto);
-
-        return new HttpResponse("/WEB-INF/view/project/update.jsp");
-    }
-
-    /**
      * 更新処理。
      *
      * @param request HTTPリクエスト
@@ -369,7 +347,7 @@ public class ProjectAction {
      */
     @OnDoubleSubmission
     public HttpResponse update(HttpRequest request, ExecutionContext context) {
-        final Project targetProject = SessionUtil.delete(context, "project");
+        Project targetProject = SessionUtil.delete(context, "project");
         UniversalDao.update(targetProject);
 
         return new HttpResponse(303, "redirect://completeOfUpdate");
